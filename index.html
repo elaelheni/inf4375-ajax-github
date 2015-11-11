@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Github</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <a class="navbar-brand" href="#">Github users</a>
+      <form class="navbar-form navbar-left" role="search" id="user-search-form">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="search users e.g. fxg42" id="user-input">
+        </div>
+      </form>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3" id="user-collection">
+      </div>
+      <div class="col-md-7" id="selected-user">
+      </div>
+    </div>
+  </div>
+  <script src="github.js"></script>
+</body>
+</html>
