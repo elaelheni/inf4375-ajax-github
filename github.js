@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // ainsi que toutes les données nécessaires à l'affichage de l'information: La
 // liste d'utilisateurs github à afficher et l'utilisateur actuellement
 // sélectionné.
+//
 function Model() {
   this.subscribers = [];
   this.users = [];
