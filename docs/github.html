@@ -407,7 +407,7 @@ l’événement survient, la fonction récupère la valeur du champs de texte
   <span class="hljs-keyword">var</span> form = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'user-search-form'</span>);
   form.addEventListener(<span class="hljs-string">'submit'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
     e.preventDefault();
-    fetchUser(input.value.toLowerCase(), model.addUser.bind(model));
+    fetchUser(input.value.toLowerCase(), model);
   });
 }</pre></div></div>
             
@@ -487,21 +487,20 @@ utilisateur de l’élément HTML cliqué (<code>login</code>) puis modifie le m
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Fonction appelée lors de la recherche d’un utilisateur github. La fonction
-prend en paramètre le nom d’utilisateur recherché (<code>candidate</code>) ainsi que la
-fonction à appellée lorsque la réponse HTTP sera retournée (<code>callback</code>).
-Construit l’URL vers le service de github et, lorsque la requête est
+prend en paramètre le nom d’utilisateur recherché (<code>candidate</code>) ainsi que le
+modèle. Construit l’URL vers le service de github et, lorsque la requête est
 complétée (<code>readyState === 4</code>) et que le statut de la réponse HTTP est 200
 (<code>status === 200</code>), interprète le contenue de la réponse HTTP en JSON puis
 déclenche un second appel Ajax.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchUser</span>(<span class="hljs-params">candidate, callback</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchUser</span>(<span class="hljs-params">candidate, model</span>) </span>{
   <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
   xhr.open(<span class="hljs-string">'get'</span>, (<span class="hljs-string">'https://api.github.com/users/'</span>+candidate+<span class="hljs-string">''</span>), <span class="hljs-literal">true</span>);
   xhr.onreadystatechange = (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">if</span> (xhr.readyState === <span class="hljs-number">4</span> &amp;&amp; xhr.status === <span class="hljs-number">200</span>) {
-      fetchUserRepos(<span class="hljs-built_in">JSON</span>.parse(xhr.responseText), callback);
+      fetchUserRepos(<span class="hljs-built_in">JSON</span>.parse(xhr.responseText), model);
     }
   });
   xhr.send();
@@ -530,22 +529,19 @@ déclenche un second appel Ajax.</p>
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Reçoit en paramètre un objet de type <code>user</code> obtenu par le service de github
-ainsi qu’une fonction à appelée quand la requête sera complétée (<code>callback</code>).
-L’URL du service est pris dans l’objet <code>user</code>. Lorsque la réponse est
-complétée avec succès, la fonction interprète la réponse reçue en JSON et
-l’ajoute à l’objet <code>user</code>. Finalement, la fonction appelle le <code>callback</code> en
-passant en paramètre l’objet <code>user</code>. Dans le cas de cette application, la
-variable <code>callback</code> pointe vers la méthode du modèle <code>addUser</code>.</p>
+ainsi que le modèle. L’URL du service est pris dans l’objet <code>user</code>. Lorsque
+la réponse est complétée avec succès, la fonction interprète la réponse reçue
+en JSON et l’ajoute à l’objet <code>user</code>. Le modèle est ensuite modifié.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchUserRepos</span>(<span class="hljs-params">user, callback</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchUserRepos</span>(<span class="hljs-params">user, model</span>) </span>{
   <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
   xhr.open(<span class="hljs-string">'get'</span>, user.repos_url, <span class="hljs-literal">true</span>);
   xhr.onreadystatechange = (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">if</span> (xhr.readyState === <span class="hljs-number">4</span> &amp;&amp; xhr.status === <span class="hljs-number">200</span>) {
       user.repos = <span class="hljs-built_in">JSON</span>.parse(xhr.responseText);
-      callback(user);
+      model.addUser(user);
     }
   });
   xhr.send();

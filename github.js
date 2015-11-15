@@ -146,7 +146,7 @@ function bindInputController(model) {
   var form = document.getElementById('user-search-form');
   form.addEventListener('submit', function(e) {
     e.preventDefault();
-    fetchUser(input.value.toLowerCase(), model.addUser.bind(model));
+    fetchUser(input.value.toLowerCase(), model);
   });
 }
 
@@ -173,19 +173,18 @@ function bindUserController(model) {
 // ### fetchUser
 
 // Fonction appelée lors de la recherche d'un utilisateur github. La fonction
-// prend en paramètre le nom d'utilisateur recherché (`candidate`) ainsi que la
-// fonction à appellée lorsque la réponse HTTP sera retournée (`callback`).
-// Construit l'URL vers le service de github et, lorsque la requête est
+// prend en paramètre le nom d'utilisateur recherché (`candidate`) ainsi que le
+// modèle. Construit l'URL vers le service de github et, lorsque la requête est
 // complétée (`readyState === 4`) et que le statut de la réponse HTTP est 200
 // (`status === 200`), interprète le contenue de la réponse HTTP en JSON puis
 // déclenche un second appel Ajax.
 //
-function fetchUser(candidate, callback) {
+function fetchUser(candidate, model) {
   var xhr = new XMLHttpRequest();
   xhr.open('get', ('https://api.github.com/users/'+candidate+''), true);
   xhr.onreadystatechange = (function() {
     if (xhr.readyState === 4 && xhr.status === 200) {
-      fetchUserRepos(JSON.parse(xhr.responseText), callback);
+      fetchUserRepos(JSON.parse(xhr.responseText), model);
     }
   });
   xhr.send();
@@ -194,20 +193,17 @@ function fetchUser(candidate, callback) {
 // ### fetchUserRepos
 
 // Reçoit en paramètre un objet de type `user` obtenu par le service de github
-// ainsi qu'une fonction à appelée quand la requête sera complétée (`callback`).
-// L'URL du service est pris dans l'objet `user`. Lorsque la réponse est
-// complétée avec succès, la fonction interprète la réponse reçue en JSON et
-// l'ajoute à l'objet `user`. Finalement, la fonction appelle le `callback` en
-// passant en paramètre l'objet `user`. Dans le cas de cette application, la
-// variable `callback` pointe vers la méthode du modèle `addUser`.
+// ainsi que le modèle. L'URL du service est pris dans l'objet `user`. Lorsque
+// la réponse est complétée avec succès, la fonction interprète la réponse reçue
+// en JSON et l'ajoute à l'objet `user`. Le modèle est ensuite modifié.
 //
-function fetchUserRepos(user, callback) {
+function fetchUserRepos(user, model) {
   var xhr = new XMLHttpRequest();
   xhr.open('get', user.repos_url, true);
   xhr.onreadystatechange = (function() {
     if (xhr.readyState === 4 && xhr.status === 200) {
       user.repos = JSON.parse(xhr.responseText);
-      callback(user);
+      model.addUser(user);
     }
   });
   xhr.send();
